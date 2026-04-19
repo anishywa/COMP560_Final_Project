@@ -33,38 +33,15 @@ template_id_1,template_id_2,score
 
 ## Evaluation
 
-```bash
-# Evaluate on dataset_a
-python evaluate.py --student_id YOUR_ID --prediction predictions/dataset_a.csv --datasets dataset_a
-
-# Evaluate on both (pass a directory containing dataset_a.csv and dataset_b.csv)
-python evaluate.py --student_id YOUR_ID --prediction predictions/ --datasets dataset_a dataset_b
-```
+Open `evaluate.ipynb`, set `STUDENT_ID`, `PREDICTION_PATH`, and `DATASETS` in the Configuration cell, then run all cells.
 
 ## Baseline
 
-Generate baseline predictions using pretrained ResNet50:
-
-```bash
-python models/resnet_baseline.py --dataset_root ./datasets/dataset_a --output predictions/dataset_a.csv
-python models/resnet_baseline.py --dataset_root ./datasets/dataset_b --output predictions/dataset_b.csv
-```
+Open `models/resnet_baseline.ipynb`, set `DATASET_ROOT` and `OUTPUT` in the Configuration cell, and run all cells.
 
 ## Training Example
 
-Train a ResNet50 model with ArcFace or triplet loss:
-
-```bash
-python train_example.py --data_root ./datasets/dataset_a --loss arcface --epochs 20
-python train_example.py --data_root ./datasets/dataset_a --loss triplet --epochs 20
-```
-
-Generate predictions from a trained checkpoint:
-
-```bash
-python train_example.py --predict --checkpoint ./checkpoints/best_model.pth --dataset_root ./datasets/dataset_a --output predictions/dataset_a.csv
-python train_example.py --predict --checkpoint ./checkpoints/best_model.pth --dataset_root ./datasets/dataset_b --output predictions/dataset_b.csv
-```
+Open `train_example.ipynb`. Set `MODE = "train"` (or `"predict"`) and configure the variables in the Configuration cell, then run all cells.
 
 ## Metrics
 
@@ -76,6 +53,24 @@ python train_example.py --predict --checkpoint ./checkpoints/best_model.pth --da
 - 40% Performance (TAR@FAR metrics)
 - 30% Efficiency (model design, embedding dimension)
 - 30% Report
+
+## Training (Advanced)
+
+Open `train.ipynb`. In the Configuration cell, set:
+- `PHASE`: `"1"`, `"2"`, or `"both"` (default)
+- `SCHEDULE`: `"step"` or `"cosine"`
+- `EMBEDDING_DIM`: `128`, `256`, or `512`
+- `DEBUG`: `True` for a fast 500-image, 2-epoch smoke test
+
+Run all cells. Checkpoints are saved to `SAVE_DIR` (`./checkpoints` by default).
+
+## TAR@FAR Evaluation
+
+Open `eval_tar.ipynb`. Set `CHECKPOINT_PATHS` (a list), `DATASET_ROOT`, and optionally `OUTPUT_CSV` and `PLOT_PATH`, then run all cells. Reports TAR at FAR={1e-4, 1e-5, 1e-6}, throughput, and peak GPU memory.
+
+## Ablation
+
+Open `ablation.ipynb`. Set `DATA_ROOT`, `DATASET_ROOT`, and `DEBUG` in the Configuration cell, then run all cells. Runs the full 3×3 matrix ({phase 1, phase 2, both} × {D=128, 256, 512}) and displays a summary table saved to `results/ablation/summary.csv`.
 
 ## Directory Structure
 
@@ -91,8 +86,12 @@ project-fr/
 │       ├── test.parquet
 │       └── pairs.parquet
 ├── models/
-│   └── resnet_baseline.py   # Baseline prediction generator
-├── evaluate.py              # Evaluation script
-├── train_example.py         # Training example
-└── results/                 # Output directory
+│   ├── resnet_baseline.ipynb  # Baseline prediction generator
+│   └── face_encoder.ipynb     # FaceEncoder model definition + sanity check
+├── train.ipynb                # Two-phase ArcFace training
+├── eval_tar.ipynb             # TAR@FAR evaluation + ROC plot
+├── ablation.ipynb             # Ablation matrix driver
+├── evaluate.ipynb             # Evaluation script
+├── train_example.ipynb        # Training example
+└── results/                   # Output directory
 ```

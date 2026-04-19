@@ -1,1 +1,9 @@
 datasets/dataset_a/images.tar.gz
+datasets/**/images/
+.DS_Store
+**/.DS_Store
+.ipynb_checkpoints/
+.virtual_documents/
+Untitled.ipynb
+PLAN.md
+
